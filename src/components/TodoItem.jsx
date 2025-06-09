@@ -4,15 +4,15 @@ import { MdDelete, MdEdit } from "react-icons/md";
 function TodoItem(props) {
   const dialog = useRef();
   const [title, setTitle] = useState(props.todo.title);
-  const [editing, setEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const openModal = (isEditing) => {
-    setEditing(isEditing);
+    setIsEditing(isEditing);
     dialog.current.showModal();
   };
 
   const closeModal = () => {
-    dialog.current.close();
+    dialog.current?.close();
   };
 
   const clickOutsideModal = (e) => {
@@ -24,9 +24,8 @@ function TodoItem(props) {
   const submitDialogForm = (e) => {
     e.preventDefault();
 
-    if (editing) {
-      const updatedTask = { title: title, date: props.todo.date };
-      props.updateTask(updatedTask, props.id);
+    if (isEditing) {
+      props.updateTask({ title: title, date: props.todo.date }, props.id);
     } else {
       props.deleteTask(props.id);
     }
@@ -69,10 +68,10 @@ function TodoItem(props) {
       >
         <form method="dialog" onSubmit={submitDialogForm} className="p-6">
           <h3 className="font-semibold text-xl">
-            {editing ? "Edit Task" : "Do you want to delete?"}
+            {isEditing ? "Edit Task" : "Do you want to delete?"}
           </h3>
           <div className="mt-2">
-            {editing ? (
+            {isEditing ? (
               <input
                 type="text"
                 className="focus:outline-none w-full border rounded py-2 px-3"
@@ -84,7 +83,7 @@ function TodoItem(props) {
                 onChange={(e) => setTitle(e.target.value)}
               />
             ) : (
-              "This will permanently delete this task."
+              <p>This will permanently delete this task.</p>
             )}
           </div>
           <div className="mt-12 text-end space-x-2">
@@ -97,13 +96,13 @@ function TodoItem(props) {
             </button>
             <button
               type="submit"
-              className={
-                editing
-                  ? "rounded bg-teal-500 px-3 py-2 text-white hover:bg-teal-600"
-                  : "rounded bg-red-500 px-3 py-2 text-white hover:bg-red-600"
-              }
+              className={`rounded px-3 py-2 text-white ${
+                isEditing
+                  ? "bg-teal-500 hover:bg-teal-600"
+                  : "bg-red-500 hover:bg-red-600"
+              }`}
             >
-              {editing ? "Confirm" : "Delete"}
+              {isEditing ? "Confirm" : "Delete"}
             </button>
           </div>
         </form>
